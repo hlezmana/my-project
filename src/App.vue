@@ -68,8 +68,8 @@
 <script>
   import {AgGridVue} from "ag-grid-vue";
   import Papa from "papaparse";
-  import RegexFilter from "./RegexFilter";
-  import CustomHeader from "./CustomHeader";
+  import RegexFilter from "./components/RegexFilter";
+  import CustomHeader from "./components/CustomHeader";
   import _ from "lodash";
   import mathjs from "mathjs";
   import Vue from 'vue';
@@ -207,6 +207,13 @@
               });
 
               this.rowData = newRowData;
+              this.gridApi.sizeColumnsToFit();
+
+              this.components = {
+                agColumnHeader: CustomHeader
+              };
+              this.populateColumnTypes();
+
               this.gridApi.sizeColumnsToFit();
             }
           });
