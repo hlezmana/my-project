@@ -101,9 +101,16 @@
           }
       },
       components: {
-          AgGridVue
+        AgGridVue
       },
       beforeMount() {
+        this.defaultColDef = {
+          width: 120,
+          headerComponentParams: {
+            menuIcon: 'fa-filter'
+          }
+        };
+
         this.columnDefs = [{
           headerName: 'Row #',
           field: 'rownum',
@@ -128,12 +135,6 @@
           filter: 'agNumberColumnFilter'
         }];
 
-        this.defaultColDef = {
-          width: 100,
-          headerComponentParams: {
-            menuIcon: 'fa-filter'
-          }
-        };
         this.rowData = [
           {rownum: 1, make: 'Toyota', model: 'Celica', price: 35000},
           {rownum: 2, make: 'Ford', model: 'Mondeo', price: 32000},
@@ -149,7 +150,6 @@
         onGridReady(params) {
           this.gridApi = params.api;
           this.columnApi = params.columnApi;
-          this.gridApi.sizeColumnsToFit();
         },
         onCellMouseOver(event) {
           var {rowIndex, colDef, api} = event;          
@@ -207,14 +207,8 @@
               });
 
               this.rowData = newRowData;
-              this.gridApi.sizeColumnsToFit();
 
-              this.components = {
-                agColumnHeader: CustomHeader
-              };
               this.populateColumnTypes();
-
-              this.gridApi.sizeColumnsToFit();
             }
           });
         },
@@ -222,7 +216,8 @@
           _.each(this.columnDefs, (columnDef) => {
             var isNumeric = !_.map(this.rowData, columnDef.field).some(isNaN);
             columnDef.type = isNumeric ? 'numeric' : 'text';
-            columnDef.filter = isNumeric ? 'agNumberColumnFilter' : RegexFilter; 
+            columnDef.width = 120;
+            columnDef.filter = isNumeric ? 'agNumberColumnFilter' : 'regexFilter'; 
           });
         },
         addStatistics(stats) {
