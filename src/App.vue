@@ -1,6 +1,5 @@
 <template>
   <div>
-    
     <tabs>
         <tab name="Import CSV">
           <div class="file-upload">
@@ -12,19 +11,30 @@
         <tab name="Statistics">
           <div class="statistics">
             Add Statistic:
-            <input type="checkbox" id="min" value="min" v-model="checkedStats">
-            <label for="min">Min</label>
+            <div>
+              <input type="checkbox" id="min" value="min" v-model="checkedStats">
+              <label for="min">Min</label>
+            </div>
+            <div>
             <input type="checkbox" id="max" value="max" v-model="checkedStats">
             <label for="max">Max</label>
+            </div>
+            <div>
             <input type="checkbox" id="mean" value="mean" v-model="checkedStats">
             <label for="mean">Average</label>
+            </div>
+            <div>
             <input type="checkbox" id="median" value="median" v-model="checkedStats">
             <label for="median">Median</label>
+            </div>
+            <div>
             <input type="checkbox" id="std" value="std" v-model="checkedStats">
             <label for="std">Standard Deviation</label>
+            </div>
+            <div>
             <input type="checkbox" id="var" value="var" v-model="checkedStats">
             <label for="var">Variance</label>
-            
+            </div>
             <button style="margin-left: 5px" v-on:click="addStatistics(checkedStats)"><i title="Add statistics" class="fa fa-calculator"></i></button>
             <button style="margin-left: 5px" v-on:click="checkedStats = [];addStatistics(checkedStats)"><i title="Clear statistics" class="fa fa-remove"></i></button>
 
@@ -34,7 +44,7 @@
           <div class="columns">
             Hide Column:
             <div v-for="column in columnDefs.slice(1)" v-bind:key="column.field" v-bind:title="column.headerName"> 
-            <input type="checkbox" v-model="column.hide">
+            <input type="checkbox" :checked="column.hide">
             <label for="column.field">{{column.headerName}}</label>
             </div>
           </div>
@@ -142,13 +152,7 @@
           this.gridApi.sizeColumnsToFit();
         },
         onCellMouseOver(event) {
-          var {rowIndex, colDef, api} = event;
-          
-          console.log(`Row: ${rowIndex+1}, 
-            Col: ${colDef.headerName},
-            Type: ${colDef.type},
-            Sort: ${api.filterManager.allFilters[colDef.field] && api.filterManager.allFilters[colDef.field].column.sort || 'None'}`);
-          
+          var {rowIndex, colDef, api} = event;          
           var column = _.find(this.columnDefs, {field: colDef.field});
           if (column) {
             column.tooltip = () => getTooltip(event);
@@ -215,7 +219,6 @@
           });
         },
         addStatistics(stats) {
-          console.log(this.rowData);
           this.rowData = _.filter(this.rowData, (row) => {
             return !isNaN(row.rownum);
           });
@@ -238,7 +241,7 @@
 </script>
 
 <style>
-    .customHeaderMenuButton {
+    .customHeaderFilter {
         margin-left: 4px;
         float: right;
     }
@@ -247,12 +250,12 @@
       float: right;
     }
 
-    .customSortDownLabel {
+    .customHeaderSortDesc {
       float: right;
       margin-left: 3px;
     }
 
-    .customSortUpLabel {
+    .customHeaderSortAsc {
       float: right;
       margin-left: 3px;
     }
@@ -277,4 +280,88 @@
         color: cornflowerblue;
     }
 
+.tabs-component {
+  margin: 4px 0;
+}
+
+.tabs-component-tabs {
+  border: solid 1px #ddd;
+  border-radius: 6px;
+  margin-bottom: 5px;
+}
+
+@media (min-width: 700px) {
+  .tabs-component-tabs {
+    border: 0;
+    align-items: stretch;
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: -1px;
+  }
+}
+
+.tabs-component-tab {
+  color: #999;
+  font-size: 14px;
+  font-weight: 600;
+  margin-right: 0;
+  list-style: none;
+}
+
+.tabs-component-tab:not(:last-child) {
+  border-bottom: dotted 1px #ddd;
+}
+
+.tabs-component-tab:hover {
+  color: #666;
+}
+
+.tabs-component-tab.is-active {
+  color: #000;
+}
+
+.tabs-component-tab.is-disabled * {
+  color: #cdcdcd;
+  cursor: not-allowed !important;
+}
+
+@media (min-width: 700px) {
+  .tabs-component-tab {
+    background-color: #fff;
+    border: solid 1px #ddd;
+    border-radius: 3px 3px 0 0;
+    margin-right: .5em;
+    transform: translateY(2px);
+    transition: transform .3s ease;
+  }
+
+  .tabs-component-tab.is-active {
+    border-bottom: solid 1px #fff;
+    z-index: 2;
+    transform: translateY(0);
+  }
+}
+
+.tabs-component-tab-a {
+  align-items: center;
+  color: inherit;
+  display: flex;
+  padding: 5px 3px;
+  text-decoration: none;
+}
+
+.tabs-component-panels {
+  padding: 5px 3px;
+}
+
+@media (min-width: 700px) {
+  .tabs-component-panels {
+    border-top-left-radius: 0;
+    background-color: #fff;
+    border: solid 1px #ddd;
+    border-radius: 0 6px 6px 6px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .05);
+    padding: 5px 3px;
+  }
+}
 </style>

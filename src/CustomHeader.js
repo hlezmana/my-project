@@ -8,25 +8,19 @@ CustomHeader.prototype.init = function (agParams) {
     this.eGui.innerHTML =
         `<div class="customHeaderLabel">${this.agParams.displayName} 
         <div class="customHeaderContainer"> 
-        <div class="customHeaderMenuButton inactive" title="Filter"><i class="fa fa-filter"></i></div>
+        <div class="customHeaderFilter inactive" title="Filter"><i class="fa fa-filter"></i></div>
         ${this.isNumeric ? '<div class="customStatistics inactive" title="Numeric"><i class="fa fa-calculator"></i></div>' : ''}
-        <div class="customSortDownLabel inactive" title="Sort Desc"><i class="fa fa-long-arrow-down"></i></div>
-        <div class="customSortUpLabel inactive" title="Sort Asc"><i class="fa fa-long-arrow-up"></i></div>
-        ${this.agParams.column.colDef.field !== 'rownum' ? '<div class="customRemoveColumn"><i class="fa fa-times"></i></div>' : ''}
+        <div class="customHeaderSortDesc inactive" title="Sort Desc"><i class="fa fa-long-arrow-down"></i></div>
+        <div class="customHeaderSortAsc inactive" title="Sort Asc"><i class="fa fa-long-arrow-up"></i></div>
+        ${this.agParams.column.colDef.field !== 'rownum' ? '<div class="customRemoveColumn" title="Hide"><i class="fa fa-times"></i></div>' : ''}
         </div>
         </div>`;
 
-    this.eMenuButton = this.eGui.querySelector(".customHeaderMenuButton");
+    this.eMenuButton = this.eGui.querySelector(".customHeaderFilter");
     
-    this.eSortDownButton = this.eGui.querySelector(".customSortDownLabel");
-    this.eSortUpButton = this.eGui.querySelector(".customSortUpLabel");
+    this.eSortDescButton = this.eGui.querySelector(".customHeaderSortDesc");
+    this.eSortAscButton = this.eGui.querySelector(".customHeaderSortAsc");
     this.eSortRemoveButton = this.eGui.querySelector(".customRemoveColumn");
-
-    if (this.isNumeric) {
-        this.eStatistics = this.eGui.querySelector(".customStatistics");
-        this.onStatisticsListener = this.onStatisticsListener.bind(this);
-        this.eStatistics.addEventListener('click', this.onStatisticsListener);
-    }
 
     if (this.agParams.enableMenu) {
         this.onMenuClickListener = this.onMenuClick.bind(this);
@@ -46,28 +40,28 @@ CustomHeader.prototype.init = function (agParams) {
 
     if (this.agParams.enableSorting) {
         this.onSortAscRequestedListener = this.onSortRequested.bind(this, 'asc');
-        this.eSortUpButton.addEventListener('click', this.onSortAscRequestedListener);
+        this.eSortAscButton.addEventListener('click', this.onSortAscRequestedListener);
         this.onSortDescRequestedListener = this.onSortRequested.bind(this, 'desc');
-        this.eSortDownButton.addEventListener('click', this.onSortDescRequestedListener);
+        this.eSortDescButton.addEventListener('click', this.onSortDescRequestedListener);
 
         this.onSortChangedListener = this.onSortChanged.bind(this);
         this.agParams.column.addEventListener('sortChanged', this.onSortChangedListener);
         this.onSortChanged();
     } else {
-        this.eGui.removeChild(this.eSortDownButton);
-        this.eGui.removeChild(this.eSortUpButton);
+        this.eGui.removeChild(this.eSortDescButton);
+        this.eGui.removeChild(this.eSortAscButton);
     }
 };
 
 CustomHeader.prototype.onSortChanged = function () {
     if (this.agParams.column.isSortAscending()) {
-        deactivate([this.eSortDownButton]);
-        activate(this.eSortUpButton)
+        deactivate([this.eSortDescButton]);
+        activate(this.eSortAscButton)
     } else if (this.agParams.column.isSortDescending()) {
-        deactivate([this.eSortUpButton]);
-        activate(this.eSortDownButton)
+        deactivate([this.eSortAscButton]);
+        activate(this.eSortDescButton)
     } else {
-        deactivate([this.eSortUpButton, this.eSortDownButton]);
+        deactivate([this.eSortAscButton, this.eSortDescButton]);
     }
 };
 
@@ -77,10 +71,6 @@ CustomHeader.prototype.getGui = function () {
 
 CustomHeader.prototype.onMenuClick = function () {
     this.agParams.showColumnMenu(this.eMenuButton);
-};
-
-CustomHeader.prototype.onStatisticsListener = function () {
-    //this.agParams.showColumnMenu(this.eStatistics);
 };
 
 CustomHeader.prototype.onRemoveColumnListener = function (event) {
@@ -105,11 +95,9 @@ CustomHeader.prototype.destroy = function () {
     if (this.onMenuClickListener) {
         this.eMenuButton.removeEventListener('click', this.onMenuClickListener)
     }
-    if (this.onStatisticsListener) {
-        this.eMenuButton.removeEventListener('click', this.onStatisticsListener)
-    }
-    this.eSortDownButton.removeEventListener('click', this.onSortRequestedListener);
-    this.eSortUpButton.removeEventListener('click', this.onSortRequestedListener);
+
+    this.eSortDescButton.removeEventListener('click', this.onSortRequestedListener);
+    this.eSortAscButton.removeEventListener('click', this.onSortRequestedListener);
     this.agParams.column.removeEventListener('sortChanged', this.onSortChangedListener);
 };
 
