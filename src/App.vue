@@ -60,7 +60,8 @@
                   :enableSorting="true"
                   :enableFilter="true"
                   :gridReady="onGridReady"
-                  :cellMouseOver="onCellMouseOver">
+                  :cellMouseOver="onCellMouseOver"
+                  :gridOptions="gridOptions">
     </ag-grid-vue>
   </div>
 </template>
@@ -97,11 +98,29 @@
               columnDefs: null,
               rowData: null,
               checkedStats: [],
-              hiddenColumns: []
+              hiddenColumns: [],
+              gridOptions: {
+                enableServerSideSorting: true,
+                enableServerSideFilter: true,
+                rowModelType: 'infinite',
+                enableColResize: true,
+                rowBuffer: 0,
+                rowSelection: 'multiple',
+                rowDeselection: true,
+                paginationPageSize: 10,
+                maxBlocksInCache: 1
+              }
           }
       },
       components: {
-        AgGridVue
+        AgGridVue,
+        loadingRenderer: function(params) {
+            if (params.value !== undefined) {
+                return params.value;
+            } else {
+                return '<img src="../images/loading.gif">'
+            }
+        }
       },
       beforeMount() {
         this.defaultColDef = {
@@ -138,11 +157,147 @@
         this.rowData = [
           {rownum: 1, make: 'Toyota', model: 'Celica', price: 35000},
           {rownum: 2, make: 'Ford', model: 'Mondeo', price: 32000},
-          {rownum: 3, make: 'Porsche', model: 'Boxter', price: 72000}
+          {rownum: 3, make: 'Porsche', model: 'Boxter', price: 72000},
+          {rownum: 4, make: 'Mazda', model: 'cx5', price: 25000},
+          {rownum: 5, make: 'Ford', model: 'Focus', price: 18000},
+          {rownum: 6, make: 'Hyundai', model: 'Sonata', price: 22000},
+          {rownum: 7, make: 'Toyota', model: 'Camry', price: 24000},
+          {rownum: 8, make: 'Ford', model: 'Fiesta', price: 14000},
+          {rownum: 9, make: 'Ford', model: 'Mustang', price: 24000},
+          {rownum: 10, make: 'Hyundai', model: 'Elantra', price: 17000},
+          {rownum: 11, make: 'BMW', model: 'Series', price: 45000},
+          {rownum: 12, make: 'Tesla', model: 'Model 3', price: 49000},
+          {rownum: 13, make: 'Mini', model: 'Cooper', price: 22000},
+          {rownum: 14, make: 'Honda', model: 'Civic', price: 19000},
+          {rownum: 15, make: 'VW', model: 'Jetta', price: 19000},
+          {rownum: 16, make: 'Audi', model: 'A4', price: 36000},
+          {rownum: 17, make: 'Mercedez', model: 'C Class', price: 42000},
+          {rownum: 18, make: 'Jaguar', model: 'XJ', price: 75000},
+          {rownum: 19, make: 'Mercedez', model: 'S Class', price: 92000},
+          {rownum: 20, make: 'BMW', model: 'Series 5', price: 54000},
+          {rownum: 21, make: 'Toyota', model: 'Celica', price: 35000},
+          {rownum: 22, make: 'Ford', model: 'Mondeo', price: 32000},
+          {rownum: 23, make: 'Porsche', model: 'Boxter', price: 72000},
+          {rownum: 24, make: 'Mazda', model: 'cx5', price: 25000},
+          {rownum: 25, make: 'Ford', model: 'Focus', price: 18000},
+          {rownum: 26, make: 'Hyundai', model: 'Sonata', price: 22000},
+          {rownum: 27, make: 'Toyota', model: 'Camry', price: 24000},
+          {rownum: 28, make: 'Ford', model: 'Fiesta', price: 14000},
+          {rownum: 29, make: 'Ford', model: 'Mustang', price: 24000},
+          {rownum: 30, make: 'Hyundai', model: 'Elantra', price: 17000},
+          {rownum: 31, make: 'BMW', model: 'Series', price: 45000},
+          {rownum: 32, make: 'Tesla', model: 'Model 3', price: 49000},
+          {rownum: 33, make: 'Mini', model: 'Cooper', price: 22000},
+          {rownum: 34, make: 'Honda', model: 'Civic', price: 19000},
+          {rownum: 35, make: 'VW', model: 'Jetta', price: 19000},
+          {rownum: 36, make: 'Audi', model: 'A4', price: 36000},
+          {rownum: 37, make: 'Mercedez', model: 'C Class', price: 42000},
+          {rownum: 38, make: 'Jaguar', model: 'XJ', price: 75000},
+          {rownum: 39, make: 'Mercedez', model: 'S Class', price: 92000},
+          {rownum: 40, make: 'BMW', model: 'Series 5', price: 54000},
+          {rownum: 41, make: 'Toyota', model: 'Celica', price: 35000},
+          {rownum: 42, make: 'Ford', model: 'Mondeo', price: 32000},
+          {rownum: 43, make: 'Porsche', model: 'Boxter', price: 72000},
+          {rownum: 44, make: 'Mazda', model: 'cx5', price: 25000},
+          {rownum: 45, make: 'Ford', model: 'Focus', price: 18000},
+          {rownum: 46, make: 'Hyundai', model: 'Sonata', price: 22000},
+          {rownum: 47, make: 'Toyota', model: 'Camry', price: 24000},
+          {rownum: 48, make: 'Ford', model: 'Fiesta', price: 14000},
+          {rownum: 49, make: 'Ford', model: 'Mustang', price: 24000},
+          {rownum: 50, make: 'Hyundai', model: 'Elantra', price: 17000},
+          {rownum: 51, make: 'BMW', model: 'Series 3', price: 45000},
+          {rownum: 52, make: 'Tesla', model: 'Model 3', price: 49000},
+          {rownum: 53, make: 'Mini', model: 'Cooper', price: 22000},
+          {rownum: 54, make: 'Honda', model: 'Civic', price: 19000},
+          {rownum: 55, make: 'VW', model: 'Jetta', price: 19000},
+          {rownum: 56, make: 'Audi', model: 'A4', price: 36000},
+          {rownum: 57, make: 'Mercedez', model: 'C Class', price: 42000},
+          {rownum: 58, make: 'Jaguar', model: 'XJ', price: 75000},
+          {rownum: 59, make: 'Mercedez', model: 'S Class', price: 92000},
+          {rownum: 60, make: 'BMW', model: 'Series 5', price: 54000}, 
+          {rownum: 61, make: 'Toyota', model: 'Celica', price: 35000},
+          {rownum: 62, make: 'Ford', model: 'Mondeo', price: 32000},
+          {rownum: 63, make: 'Porsche', model: 'Boxter', price: 72000},
+          {rownum: 64, make: 'Mazda', model: 'cx5', price: 25000},
+          {rownum: 65, make: 'Ford', model: 'Focus', price: 18000},
+          {rownum: 66, make: 'Hyundai', model: 'Sonata', price: 22000},
+          {rownum: 67, make: 'Toyota', model: 'Camry', price: 24000},
+          {rownum: 68, make: 'Ford', model: 'Fiesta', price: 14000},
+          {rownum: 69, make: 'Ford', model: 'Mustang', price: 24000},
+          {rownum: 70, make: 'Hyundai', model: 'Elantra', price: 17000},
+          {rownum: 71, make: 'BMW', model: 'Series', price: 45000},
+          {rownum: 72, make: 'Tesla', model: 'Model 3', price: 49000},
+          {rownum: 73, make: 'Mini', model: 'Cooper', price: 22000},
+          {rownum: 74, make: 'Honda', model: 'Civic', price: 19000},
+          {rownum: 75, make: 'VW', model: 'Jetta', price: 19000},
+          {rownum: 76, make: 'Audi', model: 'A4', price: 36000},
+          {rownum: 77, make: 'Mercedez', model: 'C Class', price: 42000},
+          {rownum: 78, make: 'Jaguar', model: 'XJ', price: 75000},
+          {rownum: 79, make: 'Mercedez', model: 'S Class', price: 92000},
+          {rownum: 80, make: 'BMW', model: 'Series 5', price: 54000}, 
+          {rownum: 81, make: 'Toyota', model: 'Celica', price: 35000},
+          {rownum: 82, make: 'Ford', model: 'Mondeo', price: 32000},
+          {rownum: 83, make: 'Porsche', model: 'Boxter', price: 72000},
+          {rownum: 84, make: 'Mazda', model: 'cx5', price: 25000},
+          {rownum: 85, make: 'Ford', model: 'Focus', price: 18000},
+          {rownum: 86, make: 'Hyundai', model: 'Sonata', price: 22000},
+          {rownum: 87, make: 'Toyota', model: 'Camry', price: 24000},
+          {rownum: 88, make: 'Ford', model: 'Fiesta', price: 14000},
+          {rownum: 89, make: 'Ford', model: 'Mustang', price: 24000},
+          {rownum: 90, make: 'Hyundai', model: 'Elantra', price: 17000},
+          {rownum: 91, make: 'BMW', model: 'Series 3', price: 45000},
+          {rownum: 92, make: 'Tesla', model: 'Model 3', price: 49000},
+          {rownum: 93, make: 'Mini', model: 'Cooper', price: 22000},
+          {rownum: 94, make: 'Honda', model: 'Civic', price: 19000},
+          {rownum: 95, make: 'VW', model: 'Jetta', price: 19000},
+          {rownum: 96, make: 'Audi', model: 'A4', price: 36000},
+          {rownum: 97, make: 'Mercedez', model: 'C Class', price: 42000},
+          {rownum: 98, make: 'Jaguar', model: 'XJ', price: 75000},
+          {rownum: 99, make: 'Mercedez', model: 'S Class', price: 92000},
+          {rownum: 100, make: 'BMW', model: 'Series 5', price: 54000},
+          {rownum: 101, make: 'Toyota', model: 'Celica', price: 35000},
+          {rownum: 102, make: 'Ford', model: 'Mondeo', price: 32000},
+          {rownum: 103, make: 'Porsche', model: 'Boxter', price: 72000},
+          {rownum: 104, make: 'Mazda', model: 'cx5', price: 25000},
+          {rownum: 105, make: 'Ford', model: 'Focus', price: 18000},
+          {rownum: 106, make: 'Hyundai', model: 'Sonata', price: 22000},
+          {rownum: 107, make: 'Toyota', model: 'Camry', price: 24000},
+          {rownum: 108, make: 'Ford', model: 'Fiesta', price: 14000},
+          {rownum: 109, make: 'Ford', model: 'Mustang', price: 24000},
+          {rownum: 110, make: 'Hyundai', model: 'Elantra', price: 17000},
+          {rownum: 111, make: 'BMW', model: 'Series', price: 45000},
+          {rownum: 112, make: 'Tesla', model: 'Model 3', price: 49000},
+          {rownum: 113, make: 'Mini', model: 'Cooper', price: 22000},
+          {rownum: 114, make: 'Honda', model: 'Civic', price: 19000},
+          {rownum: 115, make: 'VW', model: 'Jetta', price: 19000},
+          {rownum: 116, make: 'Audi', model: 'A4', price: 36000},
+          {rownum: 117, make: 'Mercedez', model: 'C Class', price: 42000},
+          {rownum: 118, make: 'Jaguar', model: 'XJ', price: 75000}
         ];
 
         this.components = {
           agColumnHeader: CustomHeader
+        };
+
+        this.dataSource = {
+          rowCount: null, // behave as infinite scroll
+          getRows: (params) => {
+              console.log('asking for ' + params.startRow + ' to ' + params.endRow);
+              // At this point in your code, you would call the server, using $http if in AngularJS 1.x.
+              // To make the demo look real, wait for 500ms before returning
+              
+              setTimeout( () => {
+                  var dataAfterSortingAndFiltering = this.sortAndFilter(this.rowData, params.sortModel, params.filterModel);
+                  var rowsThisPage = dataAfterSortingAndFiltering.slice(params.startRow, params.endRow);
+                  // if on or after the last page, work out the last row.
+                  var lastRow = -1;
+                  if (dataAfterSortingAndFiltering.length <= params.endRow) {
+                      lastRow = dataAfterSortingAndFiltering.length;
+                  }
+                  // call the success callback
+                  params.successCallback(rowsThisPage, lastRow);
+              }, 500);
+          }
         };
         this.populateColumnTypes();
       },
@@ -150,6 +305,8 @@
         onGridReady(params) {
           this.gridApi = params.api;
           this.columnApi = params.columnApi;
+
+          this.gridApi.setDatasource(this.dataSource);
         },
         onCellMouseOver(event) {
           var {rowIndex, colDef, api} = event;          
@@ -207,8 +364,8 @@
               });
 
               this.rowData = newRowData;
-
               this.populateColumnTypes();
+              this.gridApi.setDatasource(this.dataSource);
             }
           });
         },
@@ -237,6 +394,86 @@
             this.rowData.unshift(statRow);
           });
           
+        },
+        sortAndFilter(allOfTheData, sortModel, filterModel) {
+            return this.sortData(sortModel, this.filterData(filterModel, allOfTheData));
+        },
+        sortData(sortModel, data) {
+            var sortPresent = sortModel && sortModel.length > 0;
+            if (!sortPresent) {
+                return data;
+            }
+            // do an in memory sort of the data, across all the fields
+            var resultOfSort = data.slice();
+            resultOfSort.sort(function(a, b) {
+                for (var k = 0; k < sortModel.length; k++) {
+                    var sortColModel = sortModel[k];
+                    var valueA = a[sortColModel.colId];
+                    var valueB = b[sortColModel.colId];
+                    // this filter didn't find a difference, move onto the next one
+                    if (valueA == valueB) {
+                        continue;
+                    }
+                    var sortDirection = sortColModel.sort === 'asc' ? 1 : -1;
+                    if (valueA > valueB) {
+                        return sortDirection;
+                    } else {
+                        return sortDirection * -1;
+                    }
+                }
+                // no filters found a difference
+                return 0;
+            });
+            return resultOfSort;
+        },
+        filterData(filterModel, data) {
+            var filterPresent = filterModel && Object.keys(filterModel).length > 0;
+            if (!filterPresent) {
+                return data;
+            }
+
+            var resultOfFilter = [];
+            for (var i = 0; i < data.length; i++) {
+                var item = data[i];
+
+                if (filterModel.age) {
+                    var age = item.age;
+                    var allowedAge = parseInt(filterModel.age.filter);
+                    // EQUALS = 1;
+                    // LESS_THAN = 2;
+                    // GREATER_THAN = 3;
+                    if (filterModel.age.type == 'equals') {
+                        if (age !== allowedAge) {
+                            continue;
+                        }
+                    } else if (filterModel.age.type == 'lessThan') {
+                        if (age >= allowedAge) {
+                            continue;
+                        }
+                    } else {
+                        if (age <= allowedAge) {
+                            continue;
+                        }
+                    }
+                }
+
+                if (filterModel.year) {
+                    if (filterModel.year.indexOf(item.year.toString()) < 0) {
+                        // year didn't match, so skip this record
+                        continue;
+                    }
+                }
+
+                if (filterModel.country) {
+                    if (filterModel.country.indexOf(item.country) < 0) {
+                        continue;
+                    }
+                }
+
+                resultOfFilter.push(item);
+            }
+
+            return resultOfFilter;
         }
       }
   }
