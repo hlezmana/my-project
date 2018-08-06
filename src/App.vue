@@ -136,22 +136,34 @@
           width: 80,
           pinned: 'left',
           lockPinned: true,
-          filter: 'agNumberColumnFilter'
+          filter: 'agNumberColumnFilter',
+          filterParams: {
+            newRowsAction: 'keep'
+          }
         }, {
           headerName: 'Make',
           field: 'make',
           lockPinned: true,
-          filter: RegexFilter
+          filter: RegexFilter,
+          filterParams: {
+            newRowsAction: 'keep'
+          }
         }, {
           headerName: 'Model',
           field: 'model',
           lockPinned: true,
-          filter: RegexFilter
+          filter: RegexFilter,
+          filterParams: {
+            newRowsAction: 'keep'
+          }
         }, {
           headerName: 'Price',
           field: 'price',
           lockPinned: true,
-          filter: 'agNumberColumnFilter'
+          filter: 'agNumberColumnFilter',
+          filterParams: {
+            newRowsAction: 'keep'
+          }
         }];
 
         this.rowData = [
@@ -283,6 +295,7 @@
           rowCount: null, // behave as infinite scroll
           getRows: (params) => {
               console.log('asking for ' + params.startRow + ' to ' + params.endRow);
+              console.log(params);
               // At this point in your code, you would call the server, using $http if in AngularJS 1.x.
               // To make the demo look real, wait for 500ms before returning
               
@@ -374,7 +387,7 @@
             var isNumeric = !_.map(this.rowData, columnDef.field).some(isNaN);
             columnDef.type = isNumeric ? 'numeric' : 'text';
             columnDef.width = 120;
-            columnDef.filter = isNumeric ? 'agNumberColumnFilter' : 'regexFilter'; 
+            columnDef.filter = isNumeric ? 'agNumberColumnFilter' : RegexFilter; 
           });
         },
         addStatistics(stats) {
@@ -427,53 +440,68 @@
             return resultOfSort;
         },
         filterData(filterModel, data) {
-            var filterPresent = filterModel && Object.keys(filterModel).length > 0;
-            if (!filterPresent) {
-                return data;
-            }
+          var filterPresent = filterModel && Object.keys(filterModel).length > 0;
+          if (!filterPresent) {
+              return data;
+          }
 
-            var resultOfFilter = [];
-            for (var i = 0; i < data.length; i++) {
-                var item = data[i];
+          var resultOfFilter = [];
+          for (var i = 0; i < data.length; i++) {
+              var item = data[i];
 
-                if (filterModel.age) {
-                    var age = item.age;
-                    var allowedAge = parseInt(filterModel.age.filter);
-                    // EQUALS = 1;
-                    // LESS_THAN = 2;
-                    // GREATER_THAN = 3;
-                    if (filterModel.age.type == 'equals') {
-                        if (age !== allowedAge) {
-                            continue;
-                        }
-                    } else if (filterModel.age.type == 'lessThan') {
-                        if (age >= allowedAge) {
-                            continue;
-                        }
-                    } else {
-                        if (age <= allowedAge) {
-                            continue;
-                        }
-                    }
+              var key = _.head(_.keys(filterModel));
+              var model = filterModel[key]; 
+              var value = item[key];
+              var filterValue;
+              if (model.filterType === 'number') {
+                filterValue = parseInt(model.filter);
+                if (model.type === 'equals') {
+                  if (value !== filterValue) {
+                    continue;
+                  }
+                } else if (model.type === 'lessThan') {
+                  if (value >= filterValue) {
+                    continue;
+                  }
+                } else if (model.type === 'greaterThan') {
+                  if (value <= filterValue) {
+                    continue;
+                  }
+                } else if (model.type === 'lessThanOrEqual') {
+                  if (value > filterValue) {
+                    continue;
+                  }
+                } else if (model.type === 'greaterThanOrEqual') {
+                  if (value < filterValue) {
+                    continue;
+                  }
+                } else if (model.type === 'inRange') {
+                  var filterValueTo = parseInt(model.filterTo);
+                  if (value > filterValueTo || value < filterValue) {
+                    continue;
+                  }
+                } else {
+                  if (value === filterValue) {
+                    continue;
+                  }
                 }
-
-                if (filterModel.year) {
-                    if (filterModel.year.indexOf(item.year.toString()) < 0) {
-                        // year didn't match, so skip this record
-                        continue;
-                    }
+              } else if (model.filterType === 'regex') {
+                filterValue = model.filter;
+                
+                try {
+                  var regex = new RegExp(model.filter.toLowerCase());
+                  if (!regex.test(value.toLowerCase())) {
+                    continue;
+                  }
+                } catch (error) {
+                  continue;
                 }
+                
+              }
+              resultOfFilter.push(item);
+          }
 
-                if (filterModel.country) {
-                    if (filterModel.country.indexOf(item.country) < 0) {
-                        continue;
-                    }
-                }
-
-                resultOfFilter.push(item);
-            }
-
-            return resultOfFilter;
+          return resultOfFilter;
         }
       }
   }

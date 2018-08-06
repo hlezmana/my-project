@@ -53,17 +53,15 @@ RegexFilter.prototype.isFilterActive = function () {
 };
 
 RegexFilter.prototype.getModel = function() {
-    var model = {value: this.patternText};
+    var model = {
+        filter: this.patternText,
+        filterType: 'regex'
+    };
     return model;
 };
 
 RegexFilter.prototype.setModel = function(model) {
     this.patternText = model.value;
 };
-
-// this example isn't using getModel() and setModel(),
-// so safe to just leave these empty. don't do this in your code!!!
-RegexFilter.prototype.getModel = function() {};
-RegexFilter.prototype.setModel = function() {};
 
 export default RegexFilter;
