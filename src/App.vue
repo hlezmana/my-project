@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="vertical-flex">
     <tabs>
         <tab name="Import CSV">
           <div class="file-upload">
@@ -51,8 +51,8 @@
         </tab>
     </tabs>
     
-    <ag-grid-vue style="width: 800px; height: 500px; margin-top: 5px; border-top:1px"
-                  class="ag-theme-balham"
+    <ag-grid-vue style="margin-top: 5px; border-top:2px;"
+                  class="ag-theme-balham vertical-flex"
                   :columnDefs="columnDefs"
                   :rowData="rowData"
                   :components="components"
@@ -83,7 +83,7 @@
     return '<span title="Row: ' + (params.rowIndex+1) + ', Col: ' + params.column.colDef.headerName + '">' + params.value + '</span>';
   }
 
-  var getTooltip = function(value) {;
+  var getTooltip = function(value) {
     var {colDef, rowIndex, api} = value;
     return `Row: ${rowIndex+1}, 
             Col: ${colDef.headerName},
@@ -508,53 +508,49 @@
 </script>
 
 <style>
-    .customHeaderFilter {
-        margin-left: 4px;
-        float: right;
-    }
-
-    .customHeaderContainer {
-      float: right;
-    }
-
-    .customHeaderSortDesc {
-      float: right;
-      margin-left: 3px;
-    }
-
-    .customHeaderSortAsc {
-      float: right;
-      margin-left: 3px;
-    }
-
-    .customStatistics {
-      float: right;
-      margin-left: 3px;
-    }
-
-    .customSortRemoveLabel {
-      float: right;
-      font-size: 11px;
-      margin-left: 3px;
-      display: none;
-    }
-
-    .customRemoveColumn {
-      float: right;
-      margin-left: 3px;
-    }
-    .active {
-        color: cornflowerblue;
-    }
-
-.tabs-component {
-  margin: 4px 0;
+.customHeaderFilter {
+  margin-left: 4px;
+  float: right;
 }
 
+.customHeaderContainer {
+  float: right;
+}
+
+.customHeaderSortDesc {
+  float: right;
+  margin-left: 3px;
+}
+
+.customHeaderSortAsc {
+  float: right;
+  margin-left: 3px;
+}
+
+.customStatistics {
+  float: right;
+  margin-left: 3px;
+}
+
+.customSortRemoveLabel {
+  float: right;
+  font-size: 11px;
+  margin-left: 3px;
+  display: none;
+}
+
+.customRemoveColumn {
+  float: right;
+  margin-left: 3px;
+}
+.active {
+  color: cornflowerblue;
+}
 .tabs-component-tabs {
   border: solid 1px #ddd;
   border-radius: 6px;
   margin-bottom: 5px;
+  margin-top: 0px;
 }
 
 @media (min-width: 700px) {
@@ -631,4 +627,15 @@
     padding: 5px 3px;
   }
 }
+
+html, body, .vertical-flex {
+  display: flex;
+  flex: 1 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  box-sizing: border-box;
+  flex-direction: column;
+}
+
 </style>
