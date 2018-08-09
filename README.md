@@ -1,4 +1,4 @@
-# my-project
+# ag-grid (free version) + vue.js
 
 Testing ag-grid with vue.js. Some functionalities:
 - Column header for sorting, filtering, hiding, reordering
