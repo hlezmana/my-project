@@ -36,7 +36,7 @@
             <label for="var">Variance</label>
             </div>
             <button style="margin-left: 5px" v-on:click="addStatistics(checkedStats)"><i title="Add statistics" class="fa fa-calculator"></i></button>
-            <button style="margin-left: 5px" v-on:click="checkedStats = [];addStatistics(checkedStats)"><i title="Clear statistics" class="fa fa-remove"></i></button>
+            <button style="margin-left: 5px" v-on:click="checkedStats.length=0;addStatistics()"><i title="Clear statistics" class="fa fa-remove"></i></button>
 
           </div>
         </tab>
@@ -108,7 +108,8 @@
                 rowSelection: 'multiple',
                 rowDeselection: true,
                 paginationPageSize: 10,
-                maxBlocksInCache: 1
+                maxBlocksInCache: 1,
+                pinnedTopRowData: this.addStatistics(),
               }
           }
       },
@@ -123,6 +124,7 @@
         }
       },
       beforeMount() {
+        this.checkedStats = [];
         this.defaultColDef = {
           width: 120,
           headerComponentParams: {
@@ -390,12 +392,13 @@
             columnDef.filter = isNumeric ? 'agNumberColumnFilter' : RegexFilter; 
           });
         },
-        addStatistics(stats) {
+        addStatistics() {
           this.rowData = _.filter(this.rowData, (row) => {
             return !isNaN(row.rownum);
           });
 
-          _.each(stats, (stat) => {
+          var statRows = []
+          _.each(this.checkedStats, (stat) => {
             var statRow = {
               rownum: stat
             };  
@@ -404,9 +407,11 @@
                 statRow[col.field] = mathjs[stat](_.map(this.rowData, col.field));
               }
             });
-            this.rowData.unshift(statRow);
+            statRows.unshift(statRow);
           });
-          
+
+          this.gridApi.setPinnedTopRowData(statRows);
+          return statRows;
         },
         sortAndFilter(allOfTheData, sortModel, filterModel) {
             return this.sortData(sortModel, this.filterData(filterModel, allOfTheData));
